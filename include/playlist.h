@@ -7,13 +7,12 @@
 
 class Playlist {
 public:
-    Playlist();
+    explicit Playlist(int capacity);
     ~Playlist();
 
-    void add_track(const std::string& title, const Duration& length);
+    bool add_track(const Track& track);
     int size() const;
     Duration total_length() const;
-    Track* find_track(const std::string& title);
     const Track* find_track(const std::string& title) const;
 
     Playlist(const Playlist&) = delete;
@@ -23,7 +22,6 @@ private:
     Track* m_tracks;
     int m_count;
     int m_capacity;
-    void resize(int new_capacity);
 };
 
 #endif

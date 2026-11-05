@@ -1,6 +1,11 @@
 #include "playlist.h"
 
-Playlist::Playlist() : m_count(0), m_capacity(4) {
+Playlist::Playlist(int capacity) : m_count(0) {
+    if (capacity < 1) {
+        m_capacity = 1;
+    } else {
+        m_capacity = capacity;
+    }
     m_tracks = new Track[m_capacity];
 }
 
@@ -8,25 +13,16 @@ Playlist::~Playlist() {
     delete[] m_tracks;
 }
 
-void Playlist::resize(int new_capacity) {
-    if (new_capacity < m_count) return;
-    Track* new_tracks = new Track[new_capacity];
-    for (int i = 0; i < m_count; ++i) {
-        new_tracks[i] = m_tracks[i];
-    }
-    delete[] m_tracks;
-    m_tracks = new_tracks;
-    m_capacity = new_capacity;
-}
-
-void Playlist::add_track(const std::string& title, const Duration& length) {
-    if (title.empty()) {
-        return; // Invariant: No stored track has an empty title
+bool Playlist::add_track(const Track& track) {
+    if (track.title.empty()) {
+        return false;
     }
     if (m_count >= m_capacity) {
-        resize(m_capacity * 2);
+        return false;
     }
-    m_tracks[m_count++] = Track{title, length};
+    m_tracks[m_count] = track;
+    m_count++;
+    return true;
 }
 
 int Playlist::size() const {
@@ -39,15 +35,6 @@ Duration Playlist::total_length() const {
         total = total + m_tracks[i].length;
     }
     return total;
-}
-
-Track* Playlist::find_track(const std::string& title) {
-    for (int i = 0; i < m_count; ++i) {
-        if (m_tracks[i].title == title) {
-            return &m_tracks[i];
-        }
-    }
-    return nullptr;
 }
 
 const Track* Playlist::find_track(const std::string& title) const {
