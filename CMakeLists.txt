@@ -1,0 +1,39 @@
+cmake_minimum_required(VERSION 3.20)
+project(hw2 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Warnings and runtime checks for every target in this project.
+# AddressSanitizer reports out-of-bounds access and memory leaks;
+# UndefinedBehaviorSanitizer reports signed overflow and similar.
+add_compile_options(-Wall -Wextra -Wpedantic -fsanitize=address,undefined -fno-omit-frame-pointer)
+add_link_options(-fsanitize=address,undefined)
+
+# Everything except main() lives in a library so the tests can link to it.
+# Add each new .cpp file to this list.
+add_library(hw2_lib
+    src/duration.cpp
+    src/playlist.cpp
+)
+target_include_directories(hw2_lib PUBLIC include)
+
+add_executable(hw2 app/main.cpp)
+target_link_libraries(hw2 PRIVATE hw2_lib)
+
+# GoogleTest
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG        v1.15.2
+)
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+include(GoogleTest)
+
+add_executable(hw2_tests tests/test_hw2.cpp)
+target_link_libraries(hw2_tests PRIVATE hw2_lib GTest::gtest_main)
+gtest_discover_tests(hw2_tests)
