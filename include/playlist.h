@@ -17,7 +17,7 @@
 @param find_track A pointer to the track with the specified title, or nullptr if not found.
 @param Playlist A pointer to the newly created Playlist object.
 @return A pointer to the newly created Playlist object.
-
+// class invariants guarantee that the playlist will not exceed its capacity and that the tracks will be stored in the order they were added.
 class Playlist {
 public:
     explicit Playlist(int capacity);
